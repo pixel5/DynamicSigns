@@ -1,0 +1,6 @@
+name: DynamicSigns
+version: 0.0.1
+description: Plugin for signs with dynamic and remote content
+author: pixel5
+website: http://pixel5.co
+main: com.pixel5.dynamicsigns.DynamicSigns
