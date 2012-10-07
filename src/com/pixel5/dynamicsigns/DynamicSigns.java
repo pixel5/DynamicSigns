@@ -18,7 +18,7 @@ public class DynamicSigns extends JavaPlugin {
 	
 	private DSBlockListener blockListener;
 	private ArrayList<Sign> signList;
-	private Config config;
+	private Config config = new Config(this);
 	
 	// Public objects
 	public Log log = null;

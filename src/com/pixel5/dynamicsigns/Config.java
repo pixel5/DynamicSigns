@@ -24,7 +24,6 @@ public class Config {
 	public Config(DynamicSigns instance) {
 		this.instance = instance;
 		this.log = this.instance.log;
-		// checkConfig();
 	}
 
 	// Check to see if signs.txt exists. If not, create it.
@@ -40,7 +39,7 @@ public class Config {
 				file.createNewFile();
 				addDefaults();
 			} catch (Exception e) {
-				log.println("Unable to create sign list file.");
+				System.out.println("Unable to create sign list file.");
 			}
 		} else {
 			try {  
@@ -56,7 +55,7 @@ public class Config {
 				System.exit(0); 
 				} 
 				} 
-		loadKeys();
+		// loadKeys();
 		return signList;
 	}
 	
