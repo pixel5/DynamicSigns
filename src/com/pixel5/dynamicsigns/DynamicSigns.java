@@ -17,11 +17,11 @@ import com.pixel5.dynamicsigns.Config;
 public class DynamicSigns extends JavaPlugin {
 	
 	private DSBlockListener blockListener;
-	private ArrayList<Sign> signList;
 	private Config config = new Config(this);
 	
 	// Public objects
 	public Log log = null;
+	public ArrayList<Sign> signList = new ArrayList<Sign>();
 	
 	@Override
 	public void onEnable() {
@@ -44,7 +44,7 @@ public class DynamicSigns extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		config.saveSignList(signList);
-		signList = null; // you'll want to replace this with a method that writes your list to disk eventually
+		//signList = null; // you'll want to replace this with a method that writes your list to disk eventually
 	}
 	
 	public List<Sign> getSignList() {

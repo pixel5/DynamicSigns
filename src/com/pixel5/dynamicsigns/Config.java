@@ -26,6 +26,17 @@ public class Config {
 		this.log = this.instance.log;
 	}
 
+	public boolean signListNull(){
+		boolean result;
+		if (instance.signList.equals(null)){
+			result = true;
+		}
+		else {
+			result = false;
+		}
+		return result;
+	}
+	
 	// Check to see if signs.txt exists. If not, create it.
 	// If signs.txt exists, deserialize and initial signList as ArrayList<Sign> with all signs in signlist.txt
 	// Untested
@@ -34,7 +45,7 @@ public class Config {
 		ArrayList<Sign> signList = new ArrayList<Sign>();
 		new File(directory).mkdir();
 		if (!file.exists()) {
-			signList = null;
+			//signList = null;
 			try {
 				file.createNewFile();
 				addDefaults();

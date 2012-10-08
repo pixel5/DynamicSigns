@@ -10,6 +10,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.pixel5.dynamicsigns.DynamicSigns;
+
 public class DSBlockListener implements Listener {
 	private DynamicSigns plugin;
 	
@@ -38,15 +40,12 @@ public class DSBlockListener implements Listener {
 		if (dsChecker.equals("[DynamicSigns]") && (!dsKeyChecker.equals(null) || !dsKeyChecker.equals(""))) {
 			System.out.println("Made it to the if statement!");
 			Block block = event.getBlock();
-			Sign sign = (Sign)block;
-			System.out.println("made it to checkpoint 2");
+			Sign sign = (Sign)block.getState();
 			sign.setMetadata("dsKey", new FixedMetadataValue(plugin, dsKeyChecker));
-			synchronized (plugin.getSignList()) {
-				plugin.getSignList().add(sign);
-				System.out.println("Sign placed.");
-			}
+			System.out.println("made it to checkpoint 2");
+			plugin.signList.add(sign);
+			System.out.println("Sign placed.");
 			plugin.initialWriteToSign(sign);
-			System.out.println("made it to checkpoint 3");
 		}
 	}
 	
