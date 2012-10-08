@@ -1,6 +1,7 @@
 package com.pixel5.dynamicsigns;
 
 import java.io.File;
+import java.sql.Driver;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,13 +19,14 @@ public class DynamicSigns extends JavaPlugin {
 	
 	private DSBlockListener blockListener;
 	private Config config = new Config(this);
+	private List<Sign> signList;
 	
 	// Public objects
 	public Log log = null;
-	public ArrayList<Sign> signList = new ArrayList<Sign>();
 	
 	@Override
 	public void onEnable() {
+		signList = new ArrayList<Sign>();
 		// Create plugin configuration directory if it doesn't exist
 		String pluginPath = "plugins" + File.separator + "DynamicSigns" + 
 				File.separator;
@@ -36,14 +38,15 @@ public class DynamicSigns extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		
 		// Create sign list file if it doesn't exist and/or initialize signList
-		signList = config.signFileCheck();
+		//signList = config.signFileCheck();
 		blockListener = new DSBlockListener(this);
 		pm.registerEvents(this.blockListener, this);
 	}
 	
 	@Override
 	public void onDisable() {
-		config.saveSignList(signList);
+		signList = null;
+		//config.saveSignList(signList);
 		//signList = null; // you'll want to replace this with a method that writes your list to disk eventually
 	}
 	
@@ -54,9 +57,9 @@ public class DynamicSigns extends JavaPlugin {
 	public void initialWriteToSign(Sign sign) {
 
 		try {
-			String url = "pixel5.co";
-			String user = "dsUser";
-			String pass = "testpass";
+			String url = "localhost";
+			String user = "root";
+			String pass = "Sideline1!";
 			Connection sqlConnect = DriverManager.getConnection(url, user, pass);
 			Statement select = sqlConnect.createStatement();
 			ResultSet result = select.executeQuery("SELECT * FROM `signs` WHERE sign_name = '" + sign.getMetadata("dsKey").get(0).asString() + "'");

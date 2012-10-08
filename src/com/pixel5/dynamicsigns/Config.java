@@ -28,7 +28,7 @@ public class Config {
 
 	public boolean signListNull(){
 		boolean result;
-		if (instance.signList.equals(null)){
+		if (instance.getSignList().equals(null)){
 			result = true;
 		}
 		else {

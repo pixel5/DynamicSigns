@@ -43,7 +43,7 @@ public class DSBlockListener implements Listener {
 			Sign sign = (Sign)block.getState();
 			sign.setMetadata("dsKey", new FixedMetadataValue(plugin, dsKeyChecker));
 			System.out.println("made it to checkpoint 2");
-			plugin.signList.add(sign);
+			plugin.getSignList().add(sign);
 			System.out.println("Sign placed.");
 			plugin.initialWriteToSign(sign);
 		}
