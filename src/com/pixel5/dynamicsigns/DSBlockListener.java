@@ -34,17 +34,13 @@ public class DSBlockListener implements Listener {
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
 		String dsChecker = event.getLine(0);
-		System.out.println(dsChecker);
 		String dsKeyChecker = event.getLine(1);
-		System.out.println(dsKeyChecker);
 		Block block = event.getBlock();
 		Sign sign = (Sign)block.getState();
 		if (dsChecker.equals("[DynamicSigns]") && (!dsKeyChecker.equals(null) || !dsKeyChecker.equals(""))) {
-			System.out.println("Made it to the if statement!");
 			sign.setMetadata("dsKey", new FixedMetadataValue(plugin, dsKeyChecker));
-			System.out.println("made it to checkpoint 2");
 			plugin.getSignList().add(sign);
-			System.out.println("Sign placed.");
+			System.out.println("DynamicSign placed.");
 			plugin.initialWriteToSign(event, sign);
 		}
 		else {
