@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.block.Sign;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.PluginManager;
@@ -66,10 +67,10 @@ public class DynamicSigns extends JavaPlugin {
 			ResultSet result = select.executeQuery("SELECT * FROM `signs` WHERE sign_name = '" + sign.getMetadata("dsKey").get(0).asString() + "'");
 			
 			if(result.next()) { 
-				event.setLine(0, result.getString("line1"));
-				event.setLine(1, result.getString("line2"));
-				event.setLine(2, result.getString("line3"));
-				event.setLine(3, result.getString("line4"));
+				event.setLine(0, StringEscapeUtils.unescapeHtml(result.getString("line1")));
+				event.setLine(1, StringEscapeUtils.unescapeHtml(result.getString("line2")));
+				event.setLine(2, StringEscapeUtils.unescapeHtml(result.getString("line3")));
+				event.setLine(3, StringEscapeUtils.unescapeHtml(result.getString("line4")));
 			}
 			else {
 				event.setLine(0, "Sign Not Found");
