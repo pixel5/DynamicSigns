@@ -104,9 +104,9 @@ public class Config {
 		// Do I need anything here?
 	}
 
-	private void loadKeys() {
-		log.println("Loading Config File...");
-	}
+	//private void loadKeys() {
+	//	log.println("Loading Config File...");
+	//}
 
 	public void write(String root, Object x) {
 		YamlConfiguration config = load();

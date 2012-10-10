@@ -16,19 +16,20 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.pixel5.dynamicsigns.Config;
+import com.pixel5.dynamicsigns.DSObject;
 
 public class DynamicSigns extends JavaPlugin {
 	
 	private DSBlockListener blockListener;
 	private Config config = new Config(this);
-	private List<Sign> signList;
+	private List<DSObject> signList;
 	
 	// Public objects
 	public Log log = null;
 	
 	@Override
 	public void onEnable() {
-		signList = new ArrayList<Sign>();
+		// signList = new List<DSObject>();
 		// Create plugin configuration directory if it doesn't exist
 		String pluginPath = "plugins" + File.separator + "DynamicSigns" + 
 				File.separator;
@@ -52,11 +53,11 @@ public class DynamicSigns extends JavaPlugin {
 		//signList = null; // you'll want to replace this with a method that writes your list to disk eventually
 	}
 	
-	public List<Sign> getSignList() {
+	public List<DSObject> getSignList() {
 		return signList;
 	}
 
-	public void initialWriteToSign(SignChangeEvent event, Sign sign) {
+	public void initialWriteToSign(SignChangeEvent event, Sign sign, Integer dsKey) {
 
 		try {
 			String url = "jdbc:mysql://localhost/dsigns";
@@ -64,7 +65,7 @@ public class DynamicSigns extends JavaPlugin {
 			String pass = "Sideline1!";
 			Connection sqlConnect = DriverManager.getConnection(url, user, pass);
 			Statement select = sqlConnect.createStatement();
-			ResultSet result = select.executeQuery("SELECT * FROM `signs` WHERE sign_name = '" + sign.getMetadata("dsKey").get(0).asString() + "'");
+			ResultSet result = select.executeQuery("SELECT * FROM `signs` WHERE primary_key = dsKey");
 			
 			if(result.next()) { 
 				event.setLine(0, StringEscapeUtils.unescapeHtml(result.getString("line1")));

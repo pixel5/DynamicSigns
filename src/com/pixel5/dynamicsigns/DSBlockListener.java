@@ -11,6 +11,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.pixel5.dynamicsigns.DynamicSigns;
+import com.pixel5.dynamicsigns.DSObject;
 
 public class DSBlockListener implements Listener {
 	private DynamicSigns plugin;
@@ -34,14 +35,18 @@ public class DSBlockListener implements Listener {
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
 		String dsChecker = event.getLine(0);
-		String dsKeyChecker = event.getLine(1);
+		Integer dsKey = Integer.parseInt(event.getLine(1));
 		Block block = event.getBlock();
 		Sign sign = (Sign)block.getState();
-		if (dsChecker.equals("[DynamicSigns]") && (!dsKeyChecker.equals(null) || !dsKeyChecker.equals(""))) {
-			sign.setMetadata("dsKey", new FixedMetadataValue(plugin, dsKeyChecker));
-			plugin.getSignList().add(sign);
+		if (dsChecker.equals("[DynamicSigns]") && dsKey.equals(null)) {
+			sign.setMetadata("dsKey", new FixedMetadataValue(plugin, dsKey));
 			System.out.println("DynamicSign placed.");
-			plugin.initialWriteToSign(event, sign);
+			
+			// Create new DSObject, custom sign object that is serializable
+			// then add that object to the list of signs
+			DSObject newSign = new DSObject(sign, dsKey);
+			plugin.getSignList().add(newSign);
+			plugin.initialWriteToSign(event, sign, dsKey);
 		}
 		else {
 			event.setLine(0, "Sign Not Found");
