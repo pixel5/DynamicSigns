@@ -2,28 +2,33 @@ package com.pixel5.dynamicsigns;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.pixel5.dynamicsigns.DynamicSigns;
 import com.pixel5.dynamicsigns.Log;
+import com.pixel5.dynamicsigns.DSObject;
 
 public class Config {
 	private DynamicSigns instance;
 	private Log log;
+	private ArrayList<DSObject> signList = new ArrayList<DSObject>();
+	
 	public String directory = "plugins" + File.separator + DynamicSigns.class.getSimpleName();
-	File file = new File(directory + File.separator + "signs.txt");
+	File file = new File(directory + File.separator + "sign.list");
 
 	public Config(DynamicSigns instance) {
 		this.instance = instance;
 		this.log = this.instance.log;
+	}
+
+	public Config(DSBlockListener dsBlockListener) {
+		this.instance = instance;
 	}
 
 	public boolean signListNull(){
@@ -41,22 +46,20 @@ public class Config {
 	// If signs.txt exists, deserialize and initial signList as ArrayList<Sign> with all signs in signlist.txt
 	// Untested
 	@SuppressWarnings("unchecked")
-	public ArrayList<Sign> signFileCheck() {
-		ArrayList<Sign> signList = new ArrayList<Sign>();
+	public ArrayList<DSObject> signFileCheck() {
 		new File(directory).mkdir();
 		if (!file.exists()) {
-			//signList = null;
 			try {
 				file.createNewFile();
 				addDefaults();
 			} catch (Exception e) {
-				System.out.println("Unable to create sign list file.");
+				System.out.println("Unable to create sign list file. " + e);
 			}
 		} else {
 			try {  
 				FileInputStream fis = new FileInputStream(file); 
 				ObjectInputStream ois = new ObjectInputStream(fis); 
-				signList = (ArrayList<Sign>)ois.readObject(); 
+				signList = (ArrayList<DSObject>)ois.readObject(); 
 				ois.close(); 
 				System.out.println("signList: " + signList); 
 				} 
@@ -70,23 +73,24 @@ public class Config {
 		return signList;
 	}
 	
-	public void saveSignList(ArrayList<Sign> signList) {
-		FileOutputStream fos;
+	public void saveSignList(ArrayList<DSObject> signList) {
+		ObjectOutputStream out = null;
 		try {
-			fos = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fos); 
-			oos.writeObject(signList); 
-			oos.flush(); 
-			oos.close(); 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("File not found exception during serialization: " + e); 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("IO exception during serialization: " + e); 
-		} 
+			out = new ObjectOutputStream(new FileOutputStream(file));
+		    out.writeObject(signList);
+		    System.out.println("Wrote Sign List with \"" + signList + "\" to file");
+		}
+		catch (IOException e) {
+		    System.err.println("Error writing object: " + e.getMessage());
+		}
+		finally {
+			try {
+				out.close();
+		      }
+		    catch (IOException e) {
+		        System.err.println(e.getMessage());
+		    }
+		}
 	}
 
 	public YamlConfiguration load() {

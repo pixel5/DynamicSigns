@@ -1,5 +1,7 @@
 package com.pixel5.dynamicsigns;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -12,9 +14,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import com.pixel5.dynamicsigns.DynamicSigns;
 import com.pixel5.dynamicsigns.DSObject;
+import com.pixel5.dynamicsigns.Config;
 
 public class DSBlockListener implements Listener {
 	private DynamicSigns plugin;
+	private Config config = new Config(this);
 	
 	public DSBlockListener(DynamicSigns instance) {
 		this.plugin = instance;
@@ -38,15 +42,17 @@ public class DSBlockListener implements Listener {
 		Integer dsKey = Integer.parseInt(event.getLine(1));
 		Block block = event.getBlock();
 		Sign sign = (Sign)block.getState();
-		if (dsChecker.equals("[DynamicSigns]") && dsKey.equals(null)) {
+		if (dsChecker.equals("[DynamicSigns]") && !dsKey.equals(null)) {
 			sign.setMetadata("dsKey", new FixedMetadataValue(plugin, dsKey));
 			System.out.println("DynamicSign placed.");
 			
 			// Create new DSObject, custom sign object that is serializable
 			// then add that object to the list of signs
 			DSObject newSign = new DSObject(sign, dsKey);
-			plugin.getSignList().add(newSign);
 			plugin.initialWriteToSign(event, sign, dsKey);
+			plugin.getSignList().add(newSign);
+			ArrayList<DSObject> signList = plugin.getSignList();
+			config.saveSignList(signList);
 		}
 		else {
 			event.setLine(0, "Sign Not Found");
@@ -61,9 +67,10 @@ public class DSBlockListener implements Listener {
 		Block block = event.getBlock();
 		if (block.getType() == Material.SIGN) {
 			Sign sign = (Sign)block;
-			synchronized (plugin.getSignList()) {
+			if (plugin.signBreakCheck(sign)) {
+				// HEY THIS IS GONNA TRY TO REMOVE A SIGN OBJECT, NOT A DSOBJECT. FIX IT, MORON.
 				plugin.getSignList().remove(sign);
-				System.out.println("Sign removed.");
+				System.out.println("DynamicSign removed.");
 			}
 		}
 	}

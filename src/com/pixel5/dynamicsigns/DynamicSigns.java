@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -22,7 +21,8 @@ public class DynamicSigns extends JavaPlugin {
 	
 	private DSBlockListener blockListener;
 	private Config config = new Config(this);
-	private List<DSObject> signList;
+	private ArrayList<DSObject> signList = new ArrayList<DSObject>();
+	private DSObject dsob;
 	
 	// Public objects
 	public Log log = null;
@@ -41,19 +41,19 @@ public class DynamicSigns extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		
 		// Create sign list file if it doesn't exist and/or initialize signList
-		//signList = config.signFileCheck();
+		signList = config.signFileCheck();
 		blockListener = new DSBlockListener(this);
 		pm.registerEvents(this.blockListener, this);
 	}
 	
 	@Override
 	public void onDisable() {
-		signList = null;
-		//config.saveSignList(signList);
+		//signList = null;
+		config.saveSignList(signList);
 		//signList = null; // you'll want to replace this with a method that writes your list to disk eventually
 	}
 	
-	public List<DSObject> getSignList() {
+	public ArrayList<DSObject> getSignList() {
 		return signList;
 	}
 
@@ -61,11 +61,12 @@ public class DynamicSigns extends JavaPlugin {
 
 		try {
 			String url = "jdbc:mysql://localhost/dsigns";
-			String user = "root";
-			String pass = "Sideline1!";
+			String user = "dsUser";
+			String pass = "dspass";
+			int dsKeyCheck = dsKey;
 			Connection sqlConnect = DriverManager.getConnection(url, user, pass);
 			Statement select = sqlConnect.createStatement();
-			ResultSet result = select.executeQuery("SELECT * FROM `signs` WHERE primary_key = dsKey");
+			ResultSet result = select.executeQuery("SELECT * FROM `signs` WHERE primary_key = " + dsKeyCheck);
 			
 			if(result.next()) { 
 				event.setLine(0, StringEscapeUtils.unescapeHtml(result.getString("line1")));
@@ -89,5 +90,31 @@ public class DynamicSigns extends JavaPlugin {
 		}
 
 	}
+	
+	public boolean signBreakCheck(Sign sign) {
+		boolean isOnList = false;
+		
+		int i = signList.size();
+		int j = 0;
+		Integer signX = sign.getX();
+		Integer signY = sign.getY();
+		Integer signZ = sign.getZ();
+		
+		while (j < i) {
+			DSObject listSign = findDSObjectByID(j);
+			if ( listSign.getSignX(listSign).equals(signX) && listSign.getSignY(listSign).equals(signY) && listSign.getSignZ(listSign).equals(signZ) ) {
+				isOnList = true;
+			}
+			else j++;
+		}
+		
+		return isOnList;
+	}
+	
 
+	public DSObject findDSObjectByID(int id){
+		DSObject foundDSObject = signList.get(id);
+		
+		return foundDSObject;
+	}
 }
